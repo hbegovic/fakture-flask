@@ -2,7 +2,7 @@ import os
 import sys
 import pandas as pd
 import shutil
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, Response
 
 UPLOAD_FOLDER = 'uploads'
 
@@ -10,16 +10,41 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# 🔐 AUTH konfiguracija
+USERNAME = "admin"
+PASSWORD = "tajna123"
+
+def check_auth(username, password):
+    return username == USERNAME and password == PASSWORD
+
+def authenticate():
+    return Response(
+        'Pristup zabranjen.\nUnesite validne kredencijale.', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+
+def requires_auth(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+# ⬇️ ZAŠTIĆENE RUTE
 @app.route('/')
+@requires_auth
 def index():
     return render_template('index.html')
 
 @app.route('/log')
+@requires_auth
 def prikazi_log():
     try:
         df = pd.read_excel("log_izvjestaj.xlsx")
 
-        # Ispravno brojanje "✅ Poslano"
         statusi = df["Status"].fillna("").str.strip()
         poslano = statusi.eq("✅ Poslano").sum()
         greske = len(statusi) - poslano
@@ -30,6 +55,7 @@ def prikazi_log():
         return f"Greska pri čitanju log fajla: {e}"
 
 @app.route('/preuzmi-log')
+@requires_auth
 def preuzmi_log():
     try:
         return send_file("log_izvjestaj.xlsx", as_attachment=True)
@@ -37,6 +63,7 @@ def preuzmi_log():
         return f"Greska pri preuzimanju log fajla: {e}"
 
 @app.route('/upload', methods=['POST'])
+@requires_auth
 def upload_files():
     if 'pdf_files' not in request.files:
         return "Nema PDF fajlova u zahtjevu.", 400
@@ -53,6 +80,7 @@ def upload_files():
     return redirect(url_for('pokreni'))
 
 @app.route('/pokreni')
+@requires_auth
 def pokreni():
     try:
         import subprocess
@@ -65,7 +93,6 @@ def pokreni():
             encoding="utf-8"
         )
 
-        # Filtriraj STDERR
         stderr_clean = "\n".join([
             line for line in rezultat.stderr.splitlines()
             if "CropBox" not in line and "MediaBox" not in line
@@ -96,5 +123,5 @@ def pokreni():
         return render_template("rezultat.html", uspjeh=False, poruka=str(e))
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Za Render
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
