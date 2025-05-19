@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import sys
 import pandas as pd
@@ -9,11 +10,18 @@ UPLOAD_FOLDER = 'uploads'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+=======
+from flask import Flask, render_template
+import os
+
+app = Flask(__name__)
+>>>>>>> 876a2e3534aaf7af6ca599fd2dd914013a5e9d82
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+<<<<<<< HEAD
 @app.route('/log')
 def prikazi_log():
     try:
@@ -97,4 +105,8 @@ def pokreni():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))  # Za Render
+=======
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+>>>>>>> 876a2e3534aaf7af6ca599fd2dd914013a5e9d82
     app.run(host='0.0.0.0', port=port)

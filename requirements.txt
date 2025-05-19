@@ -1,4 +1,7 @@
 Flask
+<<<<<<< HEAD
 pandas
 openpyxl
 pdfplumber
+=======
+>>>>>>> 876a2e3534aaf7af6ca599fd2dd914013a5e9d82
