@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rezultat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .status {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .stdout .INFO { color: green; }
+        .stdout .UPOZORENJE { color: orange; }
+        .stdout .GRESKA { color: red; }
+        a {
+            font-weight: bold;
+            color: #0072ce;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="status {{ 'success' if uspjeh else 'fail' }}">
+        {{ "✅ Slanje uspješno završeno" if uspjeh else "❌ Došlo je do greške tokom slanja" }}
+    </div>
+
+    {% if stdout %}
+    <div class="card stdout">
+        <h3>Izlaz (STDOUT):</h3>
+        <pre>
+{% for line in stdout.splitlines() %}
+<span class="{{ 'INFO' if '[INFO]' in line else 'UPOZORENJE' if '[UPOZORENJE]' in line else 'GRESKA' if '[GRESKA]' in line else '' }}">{{ line }}</span>
+{% endfor %}
+        </pre>
+    </div>
+    {% endif %}
+
+    {% if stderr %}
+    <div class="card">
+        <h3>Izlaz (STDERR):</h3>
+        <pre>{{ stderr }}</pre>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}">🔙 Nazad</a>
+</body>
+</html>

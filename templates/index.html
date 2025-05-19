@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slanje faktura</title>
+</head>
+<body style="font-family: Arial; text-align: center; margin-top: 100px;">
+    <h2>📤 Slanje faktura</h2>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label>📎 Odaberi PDF fakture:</label><br>
+        <input type="file" name="pdf_files" multiple accept=".pdf">
+        
+        <br><br>
+        <label>📋 Odaberi Excel bazu korisnika (.xlsx):</label><br>
+        <input type="file" name="xlsx_file" accept=".xlsx">
+
+        <br><br>
+        <button type="submit" style="font-size: 18px; padding: 10px 30px;">Pošalji PDF fajlove</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log izvještaj</title>
+</head>
+<body style="font-family: Arial; padding: 40px;">
+    <h2>📄 Log izvještaj</h2>
+
+    <h3>✅ Uspješno poslano: {{ poslano }}</h3>
+    <h3>❌ Grešaka: {{ greske }}</h3>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            {% for key in tabela[0].keys() %}
+                <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+        {% for red in tabela %}
+        <tr>
+            {% for value in red.values() %}
+                <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <a href="/">⬅️ Nazad</a>
+</body>
+</html>
